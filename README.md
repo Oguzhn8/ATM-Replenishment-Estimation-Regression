@@ -30,3 +30,6 @@ There are 670 rows in the training set, any of which is NULL. This information s
 #### KNN Imputer
 KNNimputer is a multivariate method used to fill out or predict the missing values in a dataset. It is a more useful method that works on the basic approach of the KNN algorithm by using variables that may be related to each other instead of the naive approach where all values are filled with the mean or median. In this approach, firstly specify a distance from the missing values which is also known as the K parameter. The missing value will be predicted in reference to the mean of the neighbours. Apart from 11 variables containing NULL values, 40 variables were used in NULL imputation. The number of neighborhoods was determined as 7, which is the approximate square root of 51 variables to be used in KNN.
 ## Feature Elimination Steps
+In the 3-stage variable elimination process, firstly, adjusted r square elimination was performed.
+### Adjusted R Square
+https://www.analyticsvidhya.com/blog/2020/07/difference-between-r-squared-and-adjusted-r-squared/

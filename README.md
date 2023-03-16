@@ -29,7 +29,31 @@ It has been noticed that there are NULL values in 11 variables in the data set. 
 There are 670 rows in the training set, any of which is NULL. This information shows that in rows where any of the related variables are not NULL, none of them are NULL. The ATM codes where the respective variables get NULL values are 1, 512, 491, 133, 537, 539, 547, 549, 459, 429, and 656. When the time series of ATMs are examined, it is noticed that the related variables do not take any value other than NULL on any date. For this reason, the related variables were subjected to the NULL imputation process by means of the KNN Imputer method.
 #### KNN Imputer
 KNNimputer is a multivariate method used to fill out or predict the missing values in a dataset. It is a more useful method that works on the basic approach of the KNN algorithm by using variables that may be related to each other instead of the naive approach where all values are filled with the mean or median. In this approach, firstly specify a distance from the missing values which is also known as the K parameter. The missing value will be predicted in reference to the mean of the neighbours. Apart from 11 variables containing NULL values, 40 variables were used in NULL imputation. The number of neighborhoods was determined as 7, which is the approximate square root of 51 variables to be used in KNN.
-## Feature Elimination Steps
+## Feature Selection Steps
 In the 3-stage variable elimination process, firstly, adjusted r square elimination was performed.
-### Adjusted R Square
-https://www.analyticsvidhya.com/blog/2020/07/difference-between-r-squared-and-adjusted-r-squared/
+### Adjusted R Square Elimination
+Adjusted R-squared tells us how well a set of predictor variables is able to explain the variation in the response variable, adjusted for the number of predictors in a model. In the first stage of the Feature Elimination process, it was tried to find out how well the related variable alone could explain the target variable by finding the adjusted r2 value with XGBoostRegressor separately for all the variables in the data set. If the adjusted r2 value of the related variable for training set is less than 0.05, the related variable is eliminated. 49 variables were eliminated in this step. Variables and adj r2 values can be found in vars_adj_r2_scores.xlsx.
+### Correlation Elimination 
+If your dataset has purely positive or negative attributes, the performance of the model is likely to be affected by a problem called "Multicollinearity". Multicollinearity occurs when one predictor variable in a multiple regression model can be predicted linearly with a higher degree of accuracy than the others. This can lead to skewed or misleading results. Luckily, decision trees and boosting trees algorithms immune to multicollinearity by nature. When they decide to split, the tree will choose only one of the perfectly related features. For this reason, although correlation elimination is not a necessary step for decision trees and boosting trees algorithms, the correlation elimination process was carried out in order to make the model work more efficiently and quickly. As a footnote, since logistic and linear regression algorithms are not immune to the Multicollinearity problem, correlation elimination is an essential step for these algorithms.
+#### Algorithm
+1- First, the correlation of each variable with the target variable is calculated. <br/> 
+2- The correlation of each variable with other variables other than the target variable is calculated. <br/>
+3- If the correlation between two variables is greater than 0.8, the variable with the smaller correlation with the target variable is eliminated. <br/>
+### Feature Importance Elimination 
+Feature importance refers to a class of techniques for assigning scores to input features to a predictive model that indicates the relative importance of each feature when making a prediction. Feature importance can be used to improve a predictive model. This can be achieved by using the importance scores to select those features to delete (lowest scores) or those features to keep (highest scores). This is a type of feature selection and can simplify the problem that is being modeled, speed up the modeling process, and in some cases, improve the performance of the model. <br/>
+The XGBRegressor model was carried out using the remaining 12 variables. Obtained importance values are shown below:
+![image](https://user-images.githubusercontent.com/78887209/225569862-769e1fef-1e16-406c-993a-c94362781f2a.png) <br/>
+The evaluation metrics obtained using the remaining 12 variables are given below: <br/>
+![image](https://user-images.githubusercontent.com/78887209/225576452-c62a7768-15dc-46b9-b8cc-6d4e1d55a108.png) <br/>
+After various simulations, it was determined that the SMAPE value decreased when the variables with feature importance less than 0.0005 were removed, so the threshold value was 0.0005. The resulting evaluation metrics are as follows: <br/>
+![image](https://user-images.githubusercontent.com/78887209/225577730-8555ee61-1bf6-4f1c-8483-333dd1062a8b.png) <br/>
+SMAPE in the table means symmetric mean absolute percent error. To explain why SMAPE is used instead of mean absolute percent error, it is useful to take a look at the MAPE formula first:
+![image](https://user-images.githubusercontent.com/78887209/225578914-56ae7b0a-1698-46c2-9265-8006bc4db8e6.png) <br/>
+As can be seen from the formula, if the actual target variable contains the value 0, MAPE is equal to infinity. When the target variable is examined, it contains 0 values. Therefore, SMAPE, an alternative to MAPE, was used in performance evaluation. The SMAPE formula is as follows:
+![image](https://user-images.githubusercontent.com/78887209/225579766-b3a3b2a9-21f0-424e-b46f-d47059355ec6.png) <br/>
+As it can be clearly seen from the formula, for the SMAPE value to be infinite, both the estimated value and the actual value must be 0. As it can be seen from the performance metrics table above, since such a situation did not occur, the SMAPE function was used as a performance metric. <br/>
+Final feature list and feature importance weights are shown below: <br/>
+![image](https://user-images.githubusercontent.com/78887209/225581054-9c324208-0668-4d1b-9972-595f33ce002c.png) <br/>
+## Modelling
+In the first stage of the modeling phase, the PyCaret library, which allows to try many algorithms with a single code block, will be discussed.
+### PyCaret

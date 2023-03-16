@@ -49,7 +49,7 @@ After various simulations, it was determined that the SMAPE value decreased when
 ![image](https://user-images.githubusercontent.com/78887209/225577730-8555ee61-1bf6-4f1c-8483-333dd1062a8b.png) <br/>
 SMAPE in the table means symmetric mean absolute percent error. To explain why SMAPE is used instead of mean absolute percent error, it is useful to take a look at the MAPE formula first:
 ![image](https://user-images.githubusercontent.com/78887209/225578914-56ae7b0a-1698-46c2-9265-8006bc4db8e6.png) <br/>
-As can be seen from the formula, if the actual target variable contains the value 0, MAPE is equal to infinity. When the target variable is examined, it contains 0 values. Therefore, SMAPE, an alternative to MAPE, was used in performance evaluation. The SMAPE formula is as follows:
+As can be seen from the formula, if the actual target variable contains the value 0, MAPE is equal to infinity. When the target variable is examined, it contains 0 values. Therefore, SMAPE, an alternative to MAPE, was used in performance evaluation. The SMAPE formula is as follows: <br/>
 ![image](https://user-images.githubusercontent.com/78887209/225579766-b3a3b2a9-21f0-424e-b46f-d47059355ec6.png) <br/>
 As it can be clearly seen from the formula, for the SMAPE value to be infinite, both the estimated value and the actual value must be 0. As it can be seen from the performance metrics table above, since such a situation did not occur, the SMAPE function was used as a performance metric. <br/>
 Final feature list and feature importance weights are shown below: <br/>

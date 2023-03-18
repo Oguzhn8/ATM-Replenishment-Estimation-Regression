@@ -57,3 +57,10 @@ Final feature list and feature importance weights are shown below: <br/>
 ## Modelling
 In the first stage of the modeling phase, the PyCaret library, which allows to try many algorithms with a single code block, will be discussed.
 ### PyCaret
+PyCaret is an open-source, low-code machine learning library in Python that automates machine learning workflows. Compared with the other open-source machine learning libraries, PyCaret is an alternate low-code library that can be used to replace hundreds of lines of code with a few lines only. The following code block compares many algorithms with final variables. <br/>
+![image](https://user-images.githubusercontent.com/78887209/226093912-27cb2ee6-6dee-41a6-a92c-0100e566aab8.png) <br/>
+The top 5 models in terms of R2 Score can be seen below: <br/>
+![image](https://user-images.githubusercontent.com/78887209/226093952-28abb252-af39-4718-9702-5576ce5b2719.png) <br/>
+As can be seen from the table, the best performing model was the Extra Tree Regressor model. Therefore, Extra Tree Regressor will be used as the final algorithm.
+### Deep Learning
+In order to make a comparative analysis, training with a deep learning network was also designed. Since deep neural networks are more successful than machine learning algorithms in capturing nonlinear relationships between features and target variable, all features are presented to the network without any elimination step.

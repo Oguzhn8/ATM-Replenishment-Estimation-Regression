@@ -32,7 +32,7 @@ KNNimputer is a multivariate method used to fill out or predict the missing valu
 ## Feature Selection Steps
 In the 3-stage variable elimination process, firstly, adjusted r square elimination was performed.
 ### Adjusted R Square Elimination
-Adjusted R-squared tells us how well a set of predictor variables is able to explain the variation in the response variable, adjusted for the number of predictors in a model. In the first stage of the Feature Elimination process, it was tried to find out how well the related variable alone could explain the target variable by finding the adjusted r2 value with XGBoostRegressor separately for all the variables in the data set. If the adjusted r2 value of the related variable for training set is less than 0.05, the related variable is eliminated. 49 variables were eliminated in this step. Variables and adj r2 values can be found in vars_adj_r2_scores.xlsx.
+Adjusted R-squared tells us how well a set of predictor variables is able to explain the variation in the response variable, adjusted for the number of predictors in a model. In the first stage of the Feature Elimination process, it was tried to find out how well the related variable alone could explain the target variable by finding the adjusted r2 value with XGBoostRegressor separately for all non categorical variables in the data set. If the adjusted r2 value of the related variable for training set is less than 0.05, the related variable is eliminated.
 ### Correlation Elimination 
 If your dataset has purely positive or negative attributes, the performance of the model is likely to be affected by a problem called "Multicollinearity". Multicollinearity occurs when one predictor variable in a multiple regression model can be predicted linearly with a higher degree of accuracy than the others. This can lead to skewed or misleading results. Luckily, decision trees and boosting trees algorithms immune to multicollinearity by nature. When they decide to split, the tree will choose only one of the perfectly related features. For this reason, although correlation elimination is not a necessary step for decision trees and boosting trees algorithms, the correlation elimination process was carried out in order to make the model work more efficiently and quickly. As a footnote, since logistic and linear regression algorithms are not immune to the Multicollinearity problem, correlation elimination is an essential step for these algorithms.
 #### Algorithm
@@ -41,12 +41,32 @@ If your dataset has purely positive or negative attributes, the performance of t
 3- If the correlation between two variables is greater than 0.8, the variable with the smaller correlation with the target variable is eliminated. <br/>
 ### Feature Importance Elimination 
 Feature importance refers to a class of techniques for assigning scores to input features to a predictive model that indicates the relative importance of each feature when making a prediction. Feature importance can be used to improve a predictive model. This can be achieved by using the importance scores to select those features to delete (lowest scores) or those features to keep (highest scores). This is a type of feature selection and can simplify the problem that is being modeled, speed up the modeling process, and in some cases, improve the performance of the model. <br/>
-The XGBRegressor model was carried out using the remaining 12 variables. Obtained importance values are shown below:
-![image](https://user-images.githubusercontent.com/78887209/225569862-769e1fef-1e16-406c-993a-c94362781f2a.png) <br/>
-The evaluation metrics obtained using the remaining 12 variables are given below: <br/>
-![image](https://user-images.githubusercontent.com/78887209/225576452-c62a7768-15dc-46b9-b8cc-6d4e1d55a108.png) <br/>
-After various simulations, it was determined that the SMAPE value decreased when the variables with feature importance less than 0.0005 were removed, so the threshold value was 0.0005. The resulting evaluation metrics are as follows: <br/>
-![image](https://user-images.githubusercontent.com/78887209/225577730-8555ee61-1bf6-4f1c-8483-333dd1062a8b.png) <br/>
+Obtained importance values are shown below: <br/>
+![image](https://user-images.githubusercontent.com/78887209/227522270-69203c05-fa76-4087-ae02-47427bc64b42.png) <br/>
+As a result of various simulations, the threshold value was determined as 0.01. The r2 scores obtained using the remaining 7 variables are given below: <br/>
+![image](https://user-images.githubusercontent.com/78887209/227523231-9c62e0c5-0834-4b5f-b483-db2584d8ab49.png) <br/>
+As can be seen from the table, the overfitting problem is clearly visible. XGBoost (and other gradient boosting machine routines too) has a number of parameters that can be tuned to avoid over-fitting. A few of them are as follows: <br/>
+1 - colsample_bytree : the ratio of features used. Lower ratios avoid overfitting. <br/>
+2 - subsample : the ratio of the training instances used. Lower ratios avoid overfitting. <br/>
+3 - max_depth : the maximum depth of a tree. Lower values avoid over-fitting. <br/>
+4 - gamma : the minimum loss reduction required to make a further split. Larger values avoid over-fitting. <br/>
+5 - eta : the learning rate of our GBM (i.e. how much we update our prediction with each successive tree). Lower values avoid over-fitting. <br/>
+6 - min_child_weight: the minimum sum of instance weight needed in a leaf, in certain applications this relates directly to the minimum number of instances needed in a node. Larger values avoid over-fitting. <br/>
+7 - lambda : This term is a constant that is added to the second derivative (Hessian) of the loss function during gain and weight (prediction) calculations. Larger values avoid overfitting. <br/>
+The accuracy r2 scores obtained after regularizing the hyperparameters are as follows: <br/>
+![image](https://user-images.githubusercontent.com/78887209/227530922-ca51047b-8a86-45e5-9ac8-2a02faba3eee.png) <br/>
+When the overfitting problem is handled, it is clearly noticed that the r2 score of the model is low. Therefore, in the next section, alternative variables generated from the data set will be discussed. <br/>
+## Creating Variables from Target and Descriptive variables used in the creation of the target variable
+Since the main purpose of the problem is to estimate the ATM Replenishment for the last two weeks in the data set, two-week lag variables were created. For the first two dates in the data set, 2017-01 and 2017-02, since there is no information about the past two weeks, the rows on these dates are calculated as 'NaN'. NULL imputation in these lines is done with the following method: <br/>
+1 - First of all, the data set is grouped on the basis of unique_id (ATM Code). <br/>
+2 - The 'NaN' rows are filled with the mean value of the relevant ATM. <br/>
+Thus, the weight of the role of the values in the 'NaN' rows in the branch splitting is reduced.
+It has been noticed that only the last two or a week data has been received from 4 ATMs. For this reason, NULL imputation could not be made to the related ATMs with the algorithm mentioned above. Relevant ATMs were excluded from the data set. <br/>
+### Updated Feature Elimination and Modelling Process
+The 'Feature Selection Steps' mentioned above were re-executed with the new variables created. Obtained adj_r2 scores and correlation values can be found in the relevant excels. Obtained feature importance values are shown in the table below: <br/>
+![image](https://user-images.githubusercontent.com/78887209/227536137-5dd254f7-a39c-486c-af3d-77662a4c10b4.png)
+As can be seen from the table, the new variables created are quite explanatory and important. 
+
 SMAPE in the table means symmetric mean absolute percent error. To explain why SMAPE is used instead of mean absolute percent error, it is useful to take a look at the MAPE formula first:
 ![image](https://user-images.githubusercontent.com/78887209/225578914-56ae7b0a-1698-46c2-9265-8006bc4db8e6.png) <br/>
 As can be seen from the formula, if the actual target variable contains the value 0, MAPE is equal to infinity. When the target variable is examined, it contains 0 values. Therefore, SMAPE, an alternative to MAPE, was used in performance evaluation. The SMAPE formula is as follows: <br/>

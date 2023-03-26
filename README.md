@@ -64,23 +64,15 @@ Thus, the weight of the role of the values in the 'NaN' rows in the branch split
 It has been noticed that only the last two or a week data has been received from 4 ATMs. For this reason, NULL imputation could not be made to the related ATMs with the algorithm mentioned above. Relevant ATMs were excluded from the data set. <br/>
 ### Updated Feature Elimination and Modelling Process
 The 'Feature Selection Steps' mentioned above were re-executed with the new variables created. Obtained adj_r2 scores and correlation values can be found in the relevant excels. Obtained feature importance values are shown in the table below: <br/>
-![image](https://user-images.githubusercontent.com/78887209/227536137-5dd254f7-a39c-486c-af3d-77662a4c10b4.png)
-As can be seen from the table, the new variables created are quite explanatory and important. 
-
-SMAPE in the table means symmetric mean absolute percent error. To explain why SMAPE is used instead of mean absolute percent error, it is useful to take a look at the MAPE formula first:
-![image](https://user-images.githubusercontent.com/78887209/225578914-56ae7b0a-1698-46c2-9265-8006bc4db8e6.png) <br/>
-As can be seen from the formula, if the actual target variable contains the value 0, MAPE is equal to infinity. When the target variable is examined, it contains 0 values. Therefore, SMAPE, an alternative to MAPE, was used in performance evaluation. The SMAPE formula is as follows: <br/>
-![image](https://user-images.githubusercontent.com/78887209/225579766-b3a3b2a9-21f0-424e-b46f-d47059355ec6.png) <br/>
-As it can be clearly seen from the formula, for the SMAPE value to be infinite, both the estimated value and the actual value must be 0. As it can be seen from the performance metrics table above, since such a situation did not occur, the SMAPE function was used as a performance metric. <br/>
-Final feature list and feature importance weights are shown below: <br/>
-![image](https://user-images.githubusercontent.com/78887209/225581054-9c324208-0668-4d1b-9972-595f33ce002c.png) <br/>
-## Modelling
-In the first stage of the modeling phase, the PyCaret library, which allows to try many algorithms with a single code block, will be discussed.
-### PyCaret
-PyCaret is an open-source, low-code machine learning library in Python that automates machine learning workflows. Compared with the other open-source machine learning libraries, PyCaret is an alternate low-code library that can be used to replace hundreds of lines of code with a few lines only. The following code block compares many algorithms with final variables. <br/>
-![image](https://user-images.githubusercontent.com/78887209/226093912-27cb2ee6-6dee-41a6-a92c-0100e566aab8.png) <br/>
-The top 5 models in terms of R2 Score can be seen below: <br/>
-![image](https://user-images.githubusercontent.com/78887209/226093952-28abb252-af39-4718-9702-5576ce5b2719.png) <br/>
-As can be seen from the table, the best performing model was the Extra Tree Regressor model. Therefore, Extra Tree Regressor will be used as the final algorithm.
+![image](https://user-images.githubusercontent.com/78887209/227536137-5dd254f7-a39c-486c-af3d-77662a4c10b4.png) <br/>
+As can be seen from the table, the new variables created are quite explanatory and important. As a result of various simulations, the feature importance threshold value was determined as 0.02 and the following results were obtained with the optimum parameters found. <br/>
+![image](https://user-images.githubusercontent.com/78887209/227767722-abd93dfc-1658-41df-8b9d-219f0b232f39.png) <br/>
+## Final Model and Final Results for XGBoost
+The explanatory variables used in the final model are shown in the table below. <br/>
+![image](https://user-images.githubusercontent.com/78887209/227768403-eb5cf4aa-bc49-4cdf-82ef-0a48e1341ade.png) <br/>
+In order to reduce the risk of overfitting, various hyperparameters have been determined as follows: <br/>
+![image](https://user-images.githubusercontent.com/78887209/227768560-6b2a1223-184b-4787-8acf-6dcc836bf4e8.png) <br/>
+The results obtained are as follows: <br/>
+![image](https://user-images.githubusercontent.com/78887209/227768596-2c3876cc-ea95-4186-b416-e08336bf6dee.png) <br/>
 ### Deep Learning
 In order to make a comparative analysis, training with a deep learning network was also designed. Since deep neural networks are more successful than machine learning algorithms in capturing nonlinear relationships between features and target variable, all features are presented to the network without any elimination step.

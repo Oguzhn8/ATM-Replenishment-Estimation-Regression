@@ -74,5 +74,4 @@ In order to reduce the risk of overfitting, various hyperparameters have been de
 ![image](https://user-images.githubusercontent.com/78887209/227768560-6b2a1223-184b-4787-8acf-6dcc836bf4e8.png) <br/>
 The results obtained are as follows: <br/>
 ![image](https://user-images.githubusercontent.com/78887209/227768596-2c3876cc-ea95-4186-b416-e08336bf6dee.png) <br/>
-### Deep Learning
-In order to make a comparative analysis, training with a deep learning network was also designed. Since deep neural networks are more successful than machine learning algorithms in capturing nonlinear relationships between features and target variable, all features are presented to the network without any elimination step.
+# Model Deployment
